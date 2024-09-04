@@ -1,4 +1,9 @@
-import { NativeModules, Platform } from 'react-native';
+import {
+  Image,
+  type ImageRequireSource,
+  NativeModules,
+  Platform,
+} from 'react-native';
 
 const LINKING_ERROR =
   `The package 'react-native-image-palette' doesn't seem to be linked. Make sure: \n\n` +
@@ -24,6 +29,18 @@ const ImagePalette = ImagePaletteModule
       }
     );
 
-export function multiply(a: number, b: number): Promise<number> {
-  return ImagePalette.multiply(a, b);
-}
+const resolveImageSource = (source: string | ImageRequireSource): string => {
+  if (typeof source === 'string') {
+    return source;
+  } else {
+    return Image.resolveAssetSource(source).uri;
+  }
+};
+
+export const getAverageColor = async (
+  uri: string | ImageRequireSource
+): Promise<string> => {
+  const resolvedSrc = resolveImageSource(uri);
+
+  return ImagePalette.getAverageColor(resolvedSrc);
+};

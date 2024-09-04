@@ -1,12 +1,25 @@
 {
   "name": "react-native-image-palette",
   "version": "0.1.0",
-  "description": "Get color pallete from an image",
+  "description": "Get color palette from an image",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
   "types": "lib/typescript/src/index.d.ts",
   "react-native": "src/index",
   "source": "src/index",
+  "scripts": {
+    "example": "yarn workspace react-native-image-palette-example",
+    "example:start": "yarn example start",
+    "example:pod-install": "cd example/ios && pod install",
+    "open:xcode": "xed example/ios",
+    "open:android-studio": "open -a \"Android Studio\" example/android",
+    "test": "jest",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint \"**/*.{js,ts,tsx}\"",
+    "clean": "del-cli android/build example/android/build example/android/app/build example/ios/build lib",
+    "prepare": "bob build",
+    "release": "release-it"
+  },
   "files": [
     "src",
     "lib",
@@ -25,15 +38,6 @@
     "!**/__mocks__",
     "!**/.*"
   ],
-  "scripts": {
-    "example": "yarn workspace react-native-image-palette-example",
-    "test": "jest",
-    "typecheck": "tsc --noEmit",
-    "lint": "eslint \"**/*.{js,ts,tsx}\"",
-    "clean": "del-cli android/build example/android/build example/android/app/build example/ios/build lib",
-    "prepare": "bob build",
-    "release": "release-it"
-  },
   "keywords": [
     "react-native",
     "ios",

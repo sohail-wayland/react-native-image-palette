@@ -1,18 +1,37 @@
-import * as React from 'react';
+import React, { useState, useEffect } from 'react';
+import {
+  StyleSheet,
+  View,
+  Text,
+  Image,
+  Dimensions,
+  Platform,
+} from 'react-native';
+import { getAverageColor } from 'react-native-image-palette';
 
-import { StyleSheet, View, Text } from 'react-native';
-import { multiply } from 'react-native-image-palette';
+const farm = require('./farm.jpeg');
+// const yunaUrl = 'https://i.imgur.com/68jyjZT.jpg';
+// const catUrl = 'https://i.imgur.com/O3XSdU7.jpg';
+// const bird =
+//   'https://cdn.pixabay.com/photo/2024/05/26/10/15/bird-8788491_1280.jpg';
+
+const image = farm;
 
 export default function App() {
-  const [result, setResult] = React.useState<number | undefined>();
+  const [averageColor, setAverageColor] = useState<string>('#fff');
 
-  React.useEffect(() => {
-    multiply(3, 7).then(setResult);
+  useEffect(() => {
+    getAverageColor(image).then(setAverageColor).catch(console.error);
   }, []);
 
   return (
     <View style={styles.container}>
-      <Text>Result: {result}</Text>
+      <Image source={farm} style={styles.img} />
+      <View style={[styles.avgColorView, { backgroundColor: averageColor }]}>
+        <View style={styles.textWrapper}>
+          <Text style={styles.text}>Average Color: {averageColor}</Text>
+        </View>
+      </View>
     </View>
   );
 }
@@ -20,12 +39,24 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
-  box: {
-    width: 60,
-    height: 60,
-    marginVertical: 20,
+  img: {
+    height: Dimensions.get('window').width,
+  },
+  avgColorView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  textWrapper: {
+    backgroundColor: '#fbfbfb',
+    paddingVertical: 5,
+    paddingHorizontal: 15,
+    borderRadius: 5,
+  },
+  text: {
+    fontSize: 24,
+    fontWeight: Platform.OS === 'ios' ? 500 : 'semibold',
+    color: '#202020',
   },
 });
