@@ -21,7 +21,9 @@ export default function App() {
   const [averageColor, setAverageColor] = useState<string>('#fff');
 
   useEffect(() => {
-    getAverageColor(image).then(setAverageColor).catch(console.error);
+    getAverageColor(image, { headers: { Auth: 'Bearer 123' } })
+      .then(setAverageColor)
+      .catch(console.error);
   }, []);
 
   return (

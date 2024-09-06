@@ -188,8 +188,16 @@ class ImagePalette {
     pixelSpacing: Int,
     promise: Promise
   ) {
-    val image = getImageBitMap(uri, context, headers)
-    promise.resolve(getHex(calculateAverageColor(image, pixelSpacing)))
+    val image = this.getImageBitMap(uri, context, headers)
+    service.launch {
+      try {
+        promise.resolve(getHex(calculateAverageColor(image, pixelSpacing)))
+      } catch (err: MalformedURLException) {
+        handleError(promise, Exception("Invalid URL"))
+      } catch (err: Exception) {
+        handleError(promise, err)
+      }
+    }
   }
 
 }

@@ -1,9 +1,6 @@
-import {
-  Image,
-  type ImageRequireSource,
-  NativeModules,
-  Platform,
-} from 'react-native';
+import { type ImageRequireSource, NativeModules, Platform } from 'react-native';
+import { resolveImageSource } from './utils';
+import type { Config } from './types';
 
 const LINKING_ERROR =
   `The package 'react-native-image-palette' doesn't seem to be linked. Make sure: \n\n` +
@@ -18,29 +15,22 @@ const ImagePaletteModule = isTurboModuleEnabled
   ? require('./NativeImagePalette').default
   : NativeModules.ImagePalette;
 
-const ImagePalette = ImagePaletteModule
-  ? ImagePaletteModule
-  : new Proxy(
-      {},
-      {
-        get() {
-          throw new Error(LINKING_ERROR);
-        },
-      }
-    );
-
-const resolveImageSource = (source: string | ImageRequireSource): string => {
-  if (typeof source === 'string') {
-    return source;
-  } else {
-    return Image.resolveAssetSource(source).uri;
-  }
-};
+const ImagePalette =
+  ImagePaletteModule ??
+  new Proxy(
+    {},
+    {
+      get() {
+        throw new Error(LINKING_ERROR);
+      },
+    }
+  );
 
 export const getAverageColor = async (
-  uri: string | ImageRequireSource
+  uri: string | ImageRequireSource,
+  config: Config = {}
 ): Promise<string> => {
   const resolvedSrc = resolveImageSource(uri);
 
-  return ImagePalette.getAverageColor(resolvedSrc);
+  return ImagePalette.getAverageColor(resolvedSrc, config);
 };

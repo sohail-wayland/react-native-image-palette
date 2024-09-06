@@ -40,12 +40,26 @@ class ImagePaletteModule internal constructor(context: ReactApplicationContext) 
 //  }
 
   @ReactMethod
-  override fun getAverageColor(uri: String, promise: Promise) {
+  override fun getAverageColor(uri: String, config: ReadableMap, promise: Promise) {
 
     val headers = mutableMapOf<String, String>()
+    val configHeaders = config.getMap("headers")
+
+    configHeaders?.let {
+      val iterator = it.keySetIterator()
+      while (iterator.hasNextKey()) {
+        val key = iterator.nextKey()
+        when (it.getType(key)) {
+          ReadableType.String -> headers[key] = it.getString(key) ?: ""
+          else -> throw IllegalArgumentException("Unsupported type")
+        }
+      }
+    }
+
+
 
     val pixelSpacing = 5
-    imgPalette.getAverageColor(uri, context, headers, pixelSpacing,  promise)
+    imgPalette.getAverageColor(uri, context, headers, pixelSpacing, promise)
 
   }
 

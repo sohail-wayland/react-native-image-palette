@@ -51,12 +51,15 @@ RCT_EXPORT_METHOD(multiply:(double)a
 
 
 RCT_EXPORT_METHOD(getAverageColor:(NSString*)uri
+                  configs:(NSDictionary*)configs
                   resolve:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject)
 {
     ImagePaletteModule *imagePalette = (ImagePaletteModule *)self.manager;
+    
+    NSDictionary* headers = [configs objectForKey:@"headers"];
 
-    [imagePalette getAverageColorWithUri:uri fallback:@"#fff" headers:NULL onResolve:resolve onReject:reject];
+    [imagePalette getAverageColorWithUri:uri fallback:@"#fff" headers:headers onResolve:resolve onReject:reject];
 }
 
 
