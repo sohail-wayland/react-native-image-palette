@@ -1,8 +1,4 @@
-import type { UnsafeObject } from 'react-native/Libraries/Types/CodegenTypes';
-
-export interface ConfigNative {
-  headers?: UnsafeObject;
-}
+import type { ConfigNative } from './NativeImagePalette';
 
 export type Config = Omit<ConfigNative, 'headers'> & {
   /**

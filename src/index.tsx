@@ -34,3 +34,12 @@ export const getAverageColor = async (
 
   return ImagePalette.getAverageColor(resolvedSrc, config);
 };
+
+export const getPalette = async (
+  uri: string | ImageRequireSource,
+  config: Config = {}
+): Promise<any> => {
+  const resolvedSrc = resolveImageSource(uri);
+
+  return ImagePalette.getPalette(resolvedSrc, config);
+};

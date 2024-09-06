@@ -15,40 +15,6 @@ RCT_EXPORT_MODULE()
     return self;
 }
 
-// Example method
-// See // https://reactnative.dev/docs/native-modules-ios
-RCT_EXPORT_METHOD(multiply:(double)a
-                  b:(double)b
-                  resolve:(RCTPromiseResolveBlock)resolve
-                  reject:(RCTPromiseRejectBlock)reject)
-{
-    NSNumber *result = @(a * b);
-
-    resolve(result);
-}
-
-
-//RCT_EXPORT_METHOD(getPalette:(NSString*)uri
-////                  config:(NSDictionary*)config
-//                  resolve:(RCTPromiseResolveBlock)resolve
-//                  reject:(RCTPromiseRejectBlock)reject)
-//{
-//
-//    void (^onResolve)(NSDictionary<NSString *, NSString *> *) = ^(NSDictionary<NSString *, NSString *> *result) {
-//        resolve(result);
-//    };
-//
-//    void (^onReject)(NSError *) = ^(NSError *error) {
-//        reject(@"1", error.description, error);
-//    };
-//
-//
-//    ImagePaletteManager* manager = [[ImagePaletteManager alloc] initOnResolve:onResolve onReject:onReject];
-//
-//    [manager getPaletteWithUri:uri fallback:@"#ffffff" headers:NULL quality:@"low"];
-//}
-
-
 
 RCT_EXPORT_METHOD(getAverageColor:(NSString*)uri
                   configs:(NSDictionary*)configs
@@ -59,7 +25,19 @@ RCT_EXPORT_METHOD(getAverageColor:(NSString*)uri
     
     NSDictionary* headers = [configs objectForKey:@"headers"];
 
-    [imagePalette getAverageColorWithUri:uri fallback:@"#fff" headers:headers onResolve:resolve onReject:reject];
+    [imagePalette getAverageColorWithUri:uri headers:headers onResolve:resolve onReject:reject];
+}
+
+RCT_EXPORT_METHOD(getPalette:(NSString*)uri
+                  configs:(NSDictionary*)configs
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject)
+{
+    ImagePaletteModule *imagePalette = (ImagePaletteModule *)self.manager;
+    
+    NSDictionary* headers = [configs objectForKey:@"headers"];
+
+    [imagePalette getPalleteWithUri:uri headers:headers onResolve:resolve onReject:reject];
 }
 
 

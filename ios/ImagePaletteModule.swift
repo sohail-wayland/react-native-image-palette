@@ -57,16 +57,10 @@ import UIKit
     
     @objc public func getAverageColor(
         uri: String,
-        fallback: String,
         headers: [String: String]?,
         onResolve: @escaping (String) -> Void,
         onReject: @escaping (String, String, Error) -> Void
     ) {
-        guard let fallbackColor = parseFallbackColor(hexColor: fallback) else {
-            let error = NSError.init(domain: ImagePaletteModule.ERRORS.INVALID_FALLBACK_COLOR, code: -1)
-            onReject("[ImagePalette]", error.localizedDescription, error)
-            return
-        }
         
         guard let parsedUri = URL(string: uri) else {
             let error = NSError.init(domain: ImagePaletteModule.ERRORS.INVALID_URL, code: -1)
@@ -128,80 +122,49 @@ import UIKit
         }.resume()
     }
     
-//    @objc public func getPalette(
-//        uri: String,
-//        fallback: String,
-//        headers: [String: String]?,
-//        quality: String = "low"
-//    ) {
-//        guard let fallbackColor = parseFallbackColor(hexColor: fallback) else {
-//            let error = NSError.init(domain: ImagePaletteManager.ERRORS.INVALID_FALLBACK_COLOR, code: -1)
-//            onReject(error)
-//            return
-//        }
-//        
-//        guard let parsedUri = URL(string: uri) else {
-//            let error = NSError.init(domain: ImagePaletteManager.ERRORS.INVALID_URL, code: -1)
-//            onReject(error)
-//            return
-//        }
-//        
-//        var request = URLRequest(url: parsedUri)
-//
-//        headers?.forEach { key, value in
-//            request.setValue(value, forHTTPHeaderField: key)
-//        }
-//        
-//        URLSession.shared.dataTask(with: request) {(data, response, error) in
-//            guard let data = data, error == nil else {
-//                self.onReject(NSError.init(domain: ImagePaletteManager.ERRORS.DOWNLOAD_ERR, code: -2))
-//                return
-//            }
-//
-//            guard let uiImage = UIImage(data: data) else {
-//                let error = NSError.init(domain: ImagePaletteManager.ERRORS.PARSE_ERR, code: -3)
-//                self.onReject(error)
-//                return
-//            }
-//            
-//            let qualityProp = quality
-//            let quality = self.getQuality(qualityOption: qualityProp)
-//            
-//            
-//            uiImage.getColors(quality: quality) { colors in
-//                 var resultDict: Dictionary<String, String> = ["platform": "ios"]
-//
-//                 if let background = colors?.background {
-//                     resultDict["background"] = self.toHexString(color: background)
-//                 } else {
-//                     resultDict["background"] = fallbackColor
-//                 }
-//
-//
-//                 if let primary = colors?.primary {
-//                     resultDict["primary"] = self.toHexString(color: primary)
-//                 } else {
-//                     resultDict["primary"] = fallbackColor
-//                 }
-//
-//
-//                 if let secondary = colors?.secondary {
-//                     resultDict["secondary"] = self.toHexString(color: secondary)
-//                 } else {
-//                     resultDict["secondary"] = fallbackColor
-//                 }
-//
-//                 if let detail = colors?.detail {
-//                     resultDict["detail"] = self.toHexString(color: detail)
-//                 } else {
-//                     resultDict["detail"] = fallbackColor
-//                 }
-//
-//                self.onResolve(resultDict)
-//             }
-//
-//        }.resume()
-//    
-//    }
-    
+    @objc public func getPallete(
+        uri: String,
+        headers: [String: String]?,
+        onResolve: @escaping (NSDictionary) -> Void,
+        onReject: @escaping (String, String, Error) -> Void
+    ) {
+        
+        guard let parsedUri = URL(string: uri) else {
+            let error = NSError.init(domain: ImagePaletteModule.ERRORS.INVALID_URL, code: -1)
+            onReject("[ImagePalette]", error.localizedDescription, error)
+            return
+        }
+        
+        var request = URLRequest(url: parsedUri)
+
+        headers?.forEach { key, value in
+            request.setValue(value, forHTTPHeaderField: key)
+        }
+        
+        URLSession.shared.dataTask(with: request) {(data, response, error) in
+            guard let data = data, error == nil else {
+                let error = NSError.init(domain: ImagePaletteModule.ERRORS.DOWNLOAD_ERR, code: -2)
+                onReject("[ImagePalette]", error.localizedDescription, error)
+                return
+            }
+            
+            guard let uiImage = UIImage(data: data) else {
+                let error = NSError.init(domain: ImagePaletteModule.ERRORS.PARSE_ERR, code: -3)
+                onReject("[ImagePalette]", error.localizedDescription, error)
+                return
+            }
+                        
+            Vibrant.from(uiImage).getPalette({ palette in
+                let paletteDict = NSMutableDictionary()
+                paletteDict.setObject(palette.Vibrant?.hex as Any, forKey: "vibrant" as NSString)
+                paletteDict.setObject(palette.DarkVibrant?.hex as Any, forKey: "darkVibrant" as NSString)
+                paletteDict.setObject(palette.LightVibrant?.hex as Any, forKey: "lightVibrant" as NSString)
+                paletteDict.setObject(palette.DarkMuted?.hex as Any, forKey: "darkMuted" as NSString)
+                paletteDict.setObject(palette.LightMuted?.hex as Any, forKey: "lightMuted" as NSString)
+                paletteDict.setObject(palette.Muted?.hex as Any, forKey: "muted" as NSString)
+                onResolve(paletteDict)
+            })
+            
+        }.resume()
+    }
 }
