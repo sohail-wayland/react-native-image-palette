@@ -36,8 +36,13 @@ RCT_EXPORT_METHOD(getPalette:(NSString*)uri
     ImagePaletteModule *imagePalette = (ImagePaletteModule *)self.manager;
     
     NSDictionary* headers = [configs objectForKey:@"headers"];
+    NSString* fallback = [configs objectForKey:@"fallbackColor"];
+    
+    if (fallback == nil) {
+        fallback = @"#fff";
+    }
 
-    [imagePalette getPalleteWithUri:uri headers:headers onResolve:resolve onReject:reject];
+    [imagePalette getPaletteWithUri:uri fallback:fallback headers:headers onResolve:resolve onReject:reject];
 }
 
 

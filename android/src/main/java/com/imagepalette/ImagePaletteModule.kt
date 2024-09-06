@@ -17,27 +17,27 @@ class ImagePaletteModule internal constructor(context: ReactApplicationContext) 
     return NAME
   }
 
-//  @ReactMethod
-//  override fun getPalette(uri: String/*, config: ReadableMap*/, promise: Promise) {
-//
-//    val headers = mutableMapOf<String, String>()
-//
-//    val config = Arguments.createMap()
-//
-//    val iterator = config.keySetIterator()
-//    while (iterator.hasNextKey()) {
-//      val key = iterator.nextKey()
-//      when (config.getType(key)) {
-//        ReadableType.String -> headers[key] = config.getString(key) ?: ""
-//        else -> throw IllegalArgumentException("Unsupported type")
-//      }
-//    }
-//
-//    val fallback = config.getString("fallback") ?: "#000000"
-//    val pixelSpacing = config.getString("pixelSpacing")?.toInt() ?: 5
-//    imgPalette.getPalette(uri, context, fallback, headers, pixelSpacing,  promise)
-//
-//  }
+  @ReactMethod
+  override fun getPalette(uri: String, config: ReadableMap, promise: Promise) {
+
+    val headers = mutableMapOf<String, String>()
+    val configHeaders = config.getMap("headers")
+
+    configHeaders?.let {
+      val iterator = it.keySetIterator()
+      while (iterator.hasNextKey()) {
+        val key = iterator.nextKey()
+        when (it.getType(key)) {
+          ReadableType.String -> headers[key] = it.getString(key) ?: ""
+          else -> throw IllegalArgumentException("Unsupported type")
+        }
+      }
+    }
+
+    val fallback = config.getString("fallbackColor") ?: "#fff"
+
+    imgPalette.getPalette(uri, context, fallback, headers, promise)
+  }
 
   @ReactMethod
   override fun getAverageColor(uri: String, config: ReadableMap, promise: Promise) {
@@ -57,10 +57,14 @@ class ImagePaletteModule internal constructor(context: ReactApplicationContext) 
     }
 
 
+    var pixelSpacing = 5
+    config.getDouble("pixelSpacingAndroid").let {
+      if(it !== null) {
+        pixelSpacing = it.toInt()
+      }
+    }
 
-    val pixelSpacing = 5
     imgPalette.getAverageColor(uri, context, headers, pixelSpacing, promise)
-
   }
 
   companion object {

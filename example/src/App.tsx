@@ -23,8 +23,16 @@ export default function App() {
   const [palette, setPalette] = useState<Record<string, string>>({});
 
   useEffect(() => {
-    getPalette(image).then(setPalette);
-    getAverageColor(image, { headers: { Auth: 'Bearer 123' } })
+    getPalette(image, {
+      fallbackColor: '#ABABAB',
+      headers: { Auth: 'Bearer 123' },
+    })
+      .then(setPalette)
+      .catch(console.error);
+    getAverageColor(image, {
+      pixelSpacingAndroid: 1,
+      headers: { Auth: 'Bearer 123' },
+    })
       .then(setAverageColor)
       .catch(console.error);
   }, []);

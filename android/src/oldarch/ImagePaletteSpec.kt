@@ -7,5 +7,6 @@ import com.facebook.react.bridge.ReadableMap
 
 abstract class ImagePaletteSpec internal constructor(context: ReactApplicationContext) :
   ReactContextBaseJavaModule(context) {
+  abstract fun getPalette(uri: String, config: ReadableMap, promise: Promise)
   abstract fun getAverageColor(uri: String, config: ReadableMap, promise: Promise)
 }

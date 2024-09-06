@@ -122,12 +122,18 @@ import UIKit
         }.resume()
     }
     
-    @objc public func getPallete(
+    @objc public func getPalette(
         uri: String,
+        fallback: String,
         headers: [String: String]?,
         onResolve: @escaping (NSDictionary) -> Void,
         onReject: @escaping (String, String, Error) -> Void
     ) {
+        guard let fallbackColor = parseFallbackColor(hexColor: fallback) else {
+            let error = NSError.init(domain: ImagePaletteModule.ERRORS.INVALID_FALLBACK_COLOR, code: -1)
+            onReject("[ImagePalette]", error.localizedDescription, error)
+            return
+        }
         
         guard let parsedUri = URL(string: uri) else {
             let error = NSError.init(domain: ImagePaletteModule.ERRORS.INVALID_URL, code: -1)
@@ -153,18 +159,19 @@ import UIKit
                 onReject("[ImagePalette]", error.localizedDescription, error)
                 return
             }
-                        
+            
             Vibrant.from(uiImage).getPalette({ palette in
                 let paletteDict = NSMutableDictionary()
-                paletteDict.setObject(palette.Vibrant?.hex as Any, forKey: "vibrant" as NSString)
-                paletteDict.setObject(palette.DarkVibrant?.hex as Any, forKey: "darkVibrant" as NSString)
-                paletteDict.setObject(palette.LightVibrant?.hex as Any, forKey: "lightVibrant" as NSString)
-                paletteDict.setObject(palette.DarkMuted?.hex as Any, forKey: "darkMuted" as NSString)
-                paletteDict.setObject(palette.LightMuted?.hex as Any, forKey: "lightMuted" as NSString)
-                paletteDict.setObject(palette.Muted?.hex as Any, forKey: "muted" as NSString)
+                paletteDict.setObject(palette.Vibrant?.hex ?? fallbackColor, forKey: NSString("vibrant"))
+                paletteDict.setObject(palette.DarkVibrant?.hex ?? fallbackColor, forKey: NSString("darkVibrant"))
+                paletteDict.setObject(palette.LightVibrant?.hex ?? fallbackColor, forKey: NSString("lightVibrant"))
+                paletteDict.setObject(palette.Muted?.hex ?? fallbackColor, forKey: NSString("muted"))
+                paletteDict.setObject(palette.DarkMuted?.hex ?? fallbackColor, forKey: NSString("darkMuted"))
+                paletteDict.setObject(palette.LightMuted?.hex ?? fallbackColor, forKey: NSString("lightMuted"))
                 onResolve(paletteDict)
             })
             
         }.resume()
     }
+    
 }

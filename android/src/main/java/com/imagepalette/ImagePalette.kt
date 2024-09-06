@@ -87,59 +87,54 @@ class ImagePalette {
     return image
   }
 
+  fun getPalette(
+    uri: String,
+    context: Context,
+    fallback: String,
+    headers: Map<String, String>? = null,
+    promise: Promise
+  ) {
+    service.launch {
+      try {
 
-//  fun getPalette(
-//    uri: String,
-//    context: Context,
-//    fallback: String,
-//    headers: Map<String, String>? = null,
-//    pixelSpacing: Int,
-//    promise: Promise
-//  ) {
-//    service.launch {
-//      try {
-//
-//        val image = getImageBitMap(uri, context, headers)
-//
-//        val fallbackColor = parseFallbackColor(fallback)
-//        val fallbackColorInt = Color.parseColor(fallbackColor)
-//
-//        val paletteBuilder = Palette.Builder(image)
-//        val result: WritableMap = Arguments.createMap()
-//
-//        result.putString("average", getHex(calculateAverageColor(image, pixelSpacing)))
-//        result.putString("platform", "android")
-//
-//        try {
-//          val palette = paletteBuilder.generate()
-//
-//          result.putString("dominant", getHex(palette.getDominantColor(fallbackColorInt)))
-//          result.putString("vibrant", getHex(palette.getVibrantColor(fallbackColorInt)))
-//          result.putString("darkVibrant", getHex(palette.getDarkVibrantColor(fallbackColorInt)))
-//          result.putString("lightVibrant", getHex(palette.getLightVibrantColor(fallbackColorInt)))
-//          result.putString("muted", getHex(palette.getMutedColor(fallbackColorInt)))
-//          result.putString("darkMuted", getHex(palette.getDarkMutedColor(fallbackColorInt)))
-//          result.putString("lightMuted", getHex(palette.getLightMutedColor(fallbackColorInt)))
-//
-//          promise.resolve(result)
-//        } catch (err: Exception) {
-//          result.putString("dominant", fallbackColor)
-//          result.putString("vibrant", fallbackColor)
-//          result.putString("darkVibrant", fallbackColor)
-//          result.putString("lightVibrant", fallbackColor)
-//          result.putString("muted", fallbackColor)
-//          result.putString("darkMuted", fallbackColor)
-//          result.putString("lightMuted", fallbackColor)
-//
-//          promise.resolve(result)
-//        }
-//      } catch (err: MalformedURLException) {
-//        handleError(promise, Exception("Invalid URL"))
-//      } catch (err: Exception) {
-//        handleError(promise, err)
-//      }
-//    }
-//  }
+        val image = getImageBitMap(uri, context, headers)
+
+        val fallbackColor = parseFallbackColor(fallback)
+        val fallbackColorInt = Color.parseColor(fallbackColor)
+
+        val paletteBuilder = Palette.Builder(image)
+        val result: WritableMap = Arguments.createMap()
+
+        try {
+          val palette = paletteBuilder.generate()
+
+          result.putString("dominantAndroid", getHex(palette.getDominantColor(fallbackColorInt)))
+          result.putString("vibrant", getHex(palette.getVibrantColor(fallbackColorInt)))
+          result.putString("darkVibrant", getHex(palette.getDarkVibrantColor(fallbackColorInt)))
+          result.putString("lightVibrant", getHex(palette.getLightVibrantColor(fallbackColorInt)))
+          result.putString("muted", getHex(palette.getMutedColor(fallbackColorInt)))
+          result.putString("darkMuted", getHex(palette.getDarkMutedColor(fallbackColorInt)))
+          result.putString("lightMuted", getHex(palette.getLightMutedColor(fallbackColorInt)))
+
+          promise.resolve(result)
+        } catch (err: Exception) {
+          result.putString("dominantAndroid", fallbackColor)
+          result.putString("vibrant", fallbackColor)
+          result.putString("darkVibrant", fallbackColor)
+          result.putString("lightVibrant", fallbackColor)
+          result.putString("muted", fallbackColor)
+          result.putString("darkMuted", fallbackColor)
+          result.putString("lightMuted", fallbackColor)
+
+          promise.resolve(result)
+        }
+      } catch (err: MalformedURLException) {
+        handleError(promise, Exception("Invalid URL"))
+      } catch (err: Exception) {
+        handleError(promise, err)
+      }
+    }
+  }
 
 
   private fun calculateAverageColor(bitmap: Bitmap, pixelSpacing: Int): Int {
@@ -188,9 +183,9 @@ class ImagePalette {
     pixelSpacing: Int,
     promise: Promise
   ) {
-    val image = this.getImageBitMap(uri, context, headers)
     service.launch {
       try {
+        val image = getImageBitMap(uri, context, headers)
         promise.resolve(getHex(calculateAverageColor(image, pixelSpacing)))
       } catch (err: MalformedURLException) {
         handleError(promise, Exception("Invalid URL"))
