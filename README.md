@@ -1,21 +1,39 @@
 # react-native-image-palette
 
-Get color pallete from an image
+Get color palette from an image.
 
 ## Installation
 
 ```sh
 npm install react-native-image-palette
 ```
+or
+```sh
+yarn add react-native-image-palette
+```
 
 ## Usage
 
-```js
-import { multiply } from 'react-native-image-palette';
+```ts
+import { getAverageColor, getPalette } from 'react-native-image-palette';
 
-// ...
 
-const result = await multiply(3, 7);
+const image = "https://picsum.photos/id/237/200/300"
+//or
+// const image = require('./image.jpeg');
+
+getPalette(image, {
+  fallbackColor: '#ABABAB',
+})
+  .then((palette) => console.log(palette.vibrant))
+  .catch(console.error);
+
+getAverageColor(image, {
+  pixelSpacingAndroid: 1,
+})
+  .then((averageColor) => console.log(averageColor))
+  .catch(console.error);
+
 ```
 
 ## Contributing
