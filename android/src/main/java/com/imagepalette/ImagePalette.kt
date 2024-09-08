@@ -9,6 +9,7 @@ import android.webkit.URLUtil
 import androidx.palette.graphics.Palette
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.Promise
+import com.facebook.react.bridge.WritableArray
 import com.facebook.react.bridge.WritableMap
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -16,19 +17,27 @@ import kotlinx.coroutines.launch
 import java.net.MalformedURLException
 import java.net.URI
 import kotlin.math.ceil
-
-
+import kotlin.math.floor
 
 class ImagePalette {
+
+
+  class ImageSectorConfig (
+    val fromX: Int,
+    val toX: Int,
+    val fromY: Int,
+    val toY: Int,
+    val pixelSpacingAndroid: Int
+  )
 
   private val service = CoroutineScope(Dispatchers.IO)
 
   private fun parseFallbackColor(hex: String): String {
-    if(!hex.matches(Regex("^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"))) {
+    if (!hex.matches(Regex("^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"))) {
       throw Exception("Invalid fallback hex color. Must be in the format #ffffff or #fff")
     }
 
-    if(hex.length == 7) {
+    if (hex.length == 7) {
       return hex
     }
 
@@ -56,7 +65,7 @@ class ImagePalette {
 
     // check if local resource
     if (resourceId != 0) {
-      image = BitmapFactory.decodeResource(context.resources, resourceId)
+      return BitmapFactory.decodeResource(context.resources, resourceId)
     }
 
     // check if base64
@@ -64,7 +73,7 @@ class ImagePalette {
       val base64Uri = uri.split(",")[1]
       val decodedBytes = Base64.decode(base64Uri, Base64.DEFAULT)
 
-      image = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
+      return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
     }
 
     if (URLUtil.isValidUrl(uri)) {
@@ -77,14 +86,10 @@ class ImagePalette {
         }
       }
 
-      image = BitmapFactory.decodeStream(connection.getInputStream())
+      return BitmapFactory.decodeStream(connection.getInputStream())
     }
-
-    if (image == null) {
-      throw Exception("Filed to get image")
-    }
-
-    return image
+    
+    throw Exception("Filed to get image")
   }
 
   fun getPalette(
@@ -137,32 +142,32 @@ class ImagePalette {
   }
 
 
-  private fun calculateAverageColor(bitmap: Bitmap, pixelSpacing: Int): Int {
-    val segmentWidth = 500
+  private fun calculateAverageColorBySegments(
+    bitmap: Bitmap,
+    pixelSpacing: Int,
+    fromX: Int,
+    toX: Int,
+    fromY: Int,
+    toY: Int
+  ): Int {
 
-    val width = bitmap.width
-    val height = bitmap.height
+    val height = toY - fromY
+    val width = toX - fromX
 
-    val numSegments = ceil(width.toDouble() / segmentWidth).toInt()
-    val segmentPixels = IntArray(segmentWidth * height)
+    val segmentPixels = IntArray(width * height + 100)
+
+    bitmap.getPixels(segmentPixels, 0, width, fromX, fromY, width - 1, height - 1)
 
     var redSum = 0
     var greenSum = 0
     var blueSum = 0
     var pixelCount = 0
 
-    for (i in 0 until numSegments) {
-      val xStart = i * segmentWidth
-      val xEnd = minOf(width, (i + 1) * segmentWidth)
-
-      bitmap.getPixels(segmentPixels, 0, segmentWidth, xStart, 0, xEnd - xStart, height)
-
-      for (index in segmentPixels.indices step pixelSpacing) {
-        redSum += Color.red(segmentPixels[index])
-        greenSum += Color.green(segmentPixels[index])
-        blueSum += Color.blue(segmentPixels[index])
-        pixelCount++
-      }
+    for (index in segmentPixels.indices step pixelSpacing) {
+      redSum += Color.red(segmentPixels[index])
+      greenSum += Color.green(segmentPixels[index])
+      blueSum += Color.blue(segmentPixels[index])
+      pixelCount++
     }
 
     if (pixelCount == 0) {
@@ -186,13 +191,57 @@ class ImagePalette {
     service.launch {
       try {
         val image = getImageBitMap(uri, context, headers)
-        promise.resolve(getHex(calculateAverageColor(image, pixelSpacing)))
+        val avgColor = calculateAverageColorBySegments(
+          image,
+          pixelSpacing,
+          0,
+          image.width,
+          0,
+          image.height
+        )
+        val hexAvgColor = getHex(avgColor)
+        promise.resolve(hexAvgColor)
       } catch (err: MalformedURLException) {
         handleError(promise, Exception("Invalid URL"))
       } catch (err: Exception) {
         handleError(promise, err)
       }
     }
+  }
+
+  fun getAverageColorSectors(
+    uri: String,
+    context: Context,
+    headers: Map<String, String>? = null,
+    sectors: ArrayList<ImageSectorConfig>,
+    promise: Promise
+  ) {
+    service.launch {
+      try {
+        val image = getImageBitMap(uri, context, headers)
+
+        val resultArray: WritableArray = Arguments.createArray()
+
+        for (sector in sectors) {
+          val result = calculateAverageColorBySegments(
+            image,
+            pixelSpacing = sector.pixelSpacingAndroid,
+            fromX = image.width * sector.fromX / 100,
+            toX = image.width * sector.toX / 100,
+            fromY = image.height * sector.fromY / 100,
+            toY = image.height * sector.toY / 100
+          )
+          resultArray.pushString(getHex(result))
+        }
+
+        promise.resolve(resultArray)
+      } catch (err: MalformedURLException) {
+        handleError(promise, Exception("Invalid URL"))
+      } catch (err: Exception) {
+        handleError(promise, err)
+      }
+    }
+
   }
 
 }

@@ -1,6 +1,13 @@
 import { type ImageRequireSource, NativeModules, Platform } from 'react-native';
 import { resolveImageSource } from './utils';
-import type { AverageColorConfig, PaletteConfig } from './types';
+import type {
+  ImagePaletteCommonConfig,
+  AverageColorConfig,
+  ImageSectorConfig,
+  PaletteConfig,
+} from './types';
+
+export * from './types';
 
 const LINKING_ERROR =
   `The package 'react-native-image-palette' doesn't seem to be linked. Make sure: \n\n` +
@@ -42,4 +49,14 @@ export const getPalette = async (
   const resolvedSrc = resolveImageSource(uri);
 
   return ImagePalette.getPalette(resolvedSrc, config);
+};
+
+export const getAverageColorSectors = async (
+  uri: string | ImageRequireSource,
+  sectors: ImageSectorConfig[],
+  config: ImagePaletteCommonConfig = {}
+) => {
+  const resolvedSrc = resolveImageSource(uri);
+
+  return ImagePalette.getAverageColorSectors(resolvedSrc, sectors, config);
 };

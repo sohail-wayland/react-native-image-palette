@@ -1,18 +1,26 @@
 import type {
-  PaletteConfigNative,
-  AverageConfigNative,
+  PaletteNativeConfig,
+  AverageColorNativeConfig,
+  AverageBordersColorNativeConfig,
 } from './NativeImagePalette';
 
-export type PaletteConfig = Omit<PaletteConfigNative, 'headers'> & {
+export type { PaletteResult, ImageSectorConfig } from './NativeImagePalette';
+
+export type ImagePaletteCommonConfig = {
   /**
    * Headers for image request. For example auth token if image is only available for authenticated users
    */
   headers?: Record<string, string>;
 };
 
-export type AverageColorConfig = Omit<AverageConfigNative, 'headers'> & {
-  /**
-   * Headers for image request. For example auth token if image is only available for authenticated users
-   */
-  headers?: Record<string, string>;
-};
+export type PaletteConfig = Omit<PaletteNativeConfig, 'headers'> &
+  ImagePaletteCommonConfig;
+
+export type AverageColorConfig = Omit<AverageColorNativeConfig, 'headers'> &
+  ImagePaletteCommonConfig;
+
+export type AverageBorderColorConfig = Omit<
+  AverageBordersColorNativeConfig,
+  'headers'
+> &
+  ImagePaletteCommonConfig;
