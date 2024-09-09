@@ -18,10 +18,10 @@ import {
 // const farm = require('./farm.jpeg');
 // const yunaUrl = 'https://i.imgur.com/68jyjZT.jpg';
 // const catUrl = 'https://i.imgur.com/O3XSdU7.jpg';
-const bird =
-  'https://cdn.pixabay.com/photo/2024/05/26/10/15/bird-8788491_1280.jpg';
+// const bird =
+//   'https://cdn.pixabay.com/photo/2024/05/26/10/15/bird-8788491_1280.jpg';
 
-const image = bird;
+const image = require('./sectors.jpg');
 
 export default function App() {
   const [avgSectors, setAverageSectors] = useState<string[]>([]);
@@ -42,7 +42,10 @@ export default function App() {
       { fromX: 34, toX: 66, fromY: 67, toY: 100 },
       { fromX: 67, toX: 100, fromY: 67, toY: 100 },
     ])
-      .then(setAverageSectors)
+      .then((res) => {
+        console.log({ res });
+        setAverageSectors(res);
+      })
       .catch(console.error);
 
     getPalette(image, {
@@ -77,7 +80,10 @@ export default function App() {
         {avgSectors[7] && <ColorView color={avgSectors[7]} name="3:2" />}
         {avgSectors[8] && <ColorView color={avgSectors[8]} name="3:3" />}
       </View>
-      <Image source={{ uri: image }} style={styles.img} />
+      <Image
+        source={typeof image === 'string' ? { uri: image } : image}
+        style={styles.img}
+      />
 
       {Boolean(averageColor) && (
         <ColorView name="Average Color" color={averageColor} />

@@ -1,7 +1,7 @@
 import type {
   PaletteNativeConfig,
   AverageColorNativeConfig,
-  AverageBordersColorNativeConfig,
+  ImageAverageColorSectorsNativeConfig,
 } from './NativeImagePalette';
 
 export type { PaletteResult, ImageSectorConfig } from './NativeImagePalette';
@@ -20,7 +20,7 @@ export type AverageColorConfig = Omit<AverageColorNativeConfig, 'headers'> &
   ImagePaletteCommonConfig;
 
 export type AverageBorderColorConfig = Omit<
-  AverageBordersColorNativeConfig,
+  ImageAverageColorSectorsNativeConfig,
   'headers'
 > &
   ImagePaletteCommonConfig;

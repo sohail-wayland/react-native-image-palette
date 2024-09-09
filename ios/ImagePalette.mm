@@ -45,6 +45,19 @@ RCT_EXPORT_METHOD(getPalette:(NSString*)uri
     [imagePalette getPaletteWithUri:uri fallback:fallback headers:headers onResolve:resolve onReject:reject];
 }
 
+RCT_EXPORT_METHOD(getAverageColorSectors:(NSString*)uri
+                  sectors:(NSArray*)sectors
+                  configs:(NSDictionary*)configs
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject)
+{
+    ImagePaletteModule *imagePalette = (ImagePaletteModule *)self.manager;
+    
+    NSDictionary* headers = [configs objectForKey:@"headers"];
+    
+    [imagePalette getAverageColorSectorsWithUri:uri sectors:sectors headers:headers onResolve:resolve onReject:reject];
+}
+
 
 
 // Don't compile this code when we build for the old architecture.

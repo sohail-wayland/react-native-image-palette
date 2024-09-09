@@ -11,15 +11,6 @@ export interface AverageColorNativeConfig {
   headers?: UnsafeObject;
 }
 
-export interface AverageBordersColorNativeConfig {
-  pixelSpacingAndroid?: Int32;
-  headers?: UnsafeObject;
-  top?: Int32;
-  right?: Int32;
-  bottom?: Int32;
-  left?: Int32;
-}
-
 export interface PaletteNativeConfig {
   fallbackColor?: string;
   headers?: UnsafeObject;
@@ -43,11 +34,16 @@ export interface ImageSectorConfig {
   pixelSpacingAndroid?: Int32;
 }
 
+export interface ImageAverageColorSectorsNativeConfig {
+  headers?: UnsafeObject;
+}
+
 export interface Spec extends TurboModule {
   getAverageColor(uri: string, config: PaletteNativeConfig): Promise<string>;
-  getAverageSectorsColors(
+  getAverageColorSectors(
     uri: string,
-    configs: ImageSectorConfig[]
+    sectors: ImageSectorConfig[],
+    config?: ImageAverageColorSectorsNativeConfig
   ): Promise<string[]>;
   getPalette(
     uri: string,

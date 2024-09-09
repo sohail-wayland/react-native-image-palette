@@ -88,7 +88,7 @@ class ImagePalette {
 
       return BitmapFactory.decodeStream(connection.getInputStream())
     }
-    
+
     throw Exception("Filed to get image")
   }
 

@@ -18,7 +18,6 @@ import UIKit
         static let INVALID_FALLBACK_COLOR = "Invalid fallback hex color. Must be in the format #ffffff or #fff."
     }
 
-
     
     private func toHexString(color: UIColor) -> String {
         let comp = color.cgColor.components
@@ -118,6 +117,96 @@ import UIKit
             )
             
             onResolve(self.toHexString(color: avgColor))
+            
+        }.resume()
+    }
+    
+    @objc public func getAverageColorSectors(
+        uri: String,
+        sectors: [NSDictionary],
+        headers: [String: String]?,
+        onResolve: @escaping ([String]) -> Void,
+        onReject: @escaping (String, String, Error) -> Void
+    ) {
+        guard let parsedUri = URL(string: uri) else {
+            let error = NSError.init(domain: ImagePaletteModule.ERRORS.INVALID_URL, code: -1)
+            onReject("[ImagePalette]", error.localizedDescription, error)
+            return
+        }
+        
+        var request = URLRequest(url: parsedUri)
+
+        headers?.forEach { key, value in
+            request.setValue(value, forHTTPHeaderField: key)
+        }
+        
+        URLSession.shared.dataTask(with: request) {(data, response, error) in
+            guard let data = data, error == nil else {
+                let error = NSError.init(domain: ImagePaletteModule.ERRORS.DOWNLOAD_ERR, code: -2)
+                onReject("[ImagePalette]", error.localizedDescription, error)
+                return
+            }
+            
+            guard let uiImage = UIImage(data: data) else {
+                let error = NSError.init(domain: ImagePaletteModule.ERRORS.PARSE_ERR, code: -3)
+                onReject("[ImagePalette]", error.localizedDescription, error)
+                return
+            }
+            
+            var result: [String] = []
+            
+            for sector in sectors {
+                guard let inputImage = CIImage(image: uiImage) else {
+                    let error = NSError.init(domain: ImagePaletteModule.ERRORS.PARSE_ERR, code: -1)
+                    onReject("[ImagePalette]", "Failed to create CIImage from given UIImage", error)
+                    return
+                }
+                
+                
+                let imgWidth = inputImage.extent.size.width
+                let imgHeight = inputImage.extent.size.height
+                let fromX = (sector.value(forKey: "fromX") as! CGFloat) * imgWidth / 100
+                let fromY = (sector.value(forKey: "fromY") as! CGFloat) * imgHeight / 100
+                let cropWidth = ((sector.value(forKey: "toX") as! CGFloat) * imgWidth) / 100  - fromX
+                let cropHeight = ((sector.value(forKey: "toY") as! CGFloat) * imgHeight) / 100 - fromY
+
+                let croppedImage = inputImage.cropped(
+                    to: CGRect(
+                        x: fromX ,
+                        y: imgHeight - fromY - cropHeight,
+                        width: cropWidth,
+                        height: cropHeight
+                    )
+                )
+                
+                let extentVector = CIVector(x: croppedImage.extent.origin.x, y: croppedImage.extent.origin.y, z: croppedImage.extent.size.width, w: croppedImage.extent.size.height)
+
+                guard let filter = CIFilter(name: "CIAreaAverage", parameters: [kCIInputImageKey: croppedImage, kCIInputExtentKey: extentVector]) else {
+                    let error = NSError.init(domain: ImagePaletteModule.ERRORS.PARSE_ERR, code: -1)
+                    onReject("[ImagePalette]", "Failed to apply CIFilter", error)
+                    return
+                }
+                
+                guard let outputImage = filter.outputImage else {
+                    let error = NSError.init(domain: ImagePaletteModule.ERRORS.PARSE_ERR, code: -1)
+                    onReject("[ImagePalette]", "Failed to apply get outputImage from filter", error)
+                    return
+                }
+
+                var bitmap = [UInt8](repeating: 0, count: 4)
+                let context = CIContext(options: [.workingColorSpace: kCFNull!])
+                context.render(outputImage, toBitmap: &bitmap, rowBytes: 4, bounds: CGRect(x: 0, y: 0, width: 1, height: 1), format: .RGBA8, colorSpace: nil)
+
+                let avgColor = UIColor(
+                    red: CGFloat(bitmap[0]) / 255,
+                    green: CGFloat(bitmap[1]) / 255,
+                    blue: CGFloat(bitmap[2]) / 255,
+                    alpha: CGFloat(bitmap[3]) / 255
+                )
+                result.append(self.toHexString(color: avgColor))
+            }
+            
+            onResolve(result)
             
         }.resume()
     }
