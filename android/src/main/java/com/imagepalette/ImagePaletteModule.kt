@@ -17,6 +17,10 @@ class ImagePaletteModule internal constructor(context: ReactApplicationContext) 
     return NAME
   }
 
+  companion object {
+    const val NAME = "ImagePalette"
+  }
+
   private fun getHeadersFromConfig(config: ReadableMap): MutableMap<String, String> {
     val headers = mutableMapOf<String, String>()
     val configHeaders = config.getMap("headers")
@@ -35,12 +39,42 @@ class ImagePaletteModule internal constructor(context: ReactApplicationContext) 
     return headers
   }
 
+  private fun parseSegments(segments: ReadableArray): ArrayList<ImagePalette.ImageSegmentConfig> {
+    val segmentsParsed: ArrayList<ImagePalette.ImageSegmentConfig> = ArrayList()
+
+    for (i in 0 until segments.size()) {
+      val segmentMap = segments.getMap(i)
+
+      val pixelSpacing = try {
+        segmentMap.getInt("pixelSpacingAndroid")
+      } catch (exception: Exception) {
+        5
+      }
+
+      segmentsParsed.add(
+        ImagePalette.ImageSegmentConfig(
+          fromY = segmentMap.getInt("fromY"),
+          toY = segmentMap.getInt("toY"),
+          fromX = segmentMap.getInt("fromX"),
+          toX = segmentMap.getInt("toX"),
+          pixelSpacingAndroid = pixelSpacing,
+        )
+      )
+    }
+
+    return segmentsParsed
+  }
+
+  private fun getFallbackColorFromConfig(config: ReadableMap): String {
+    return config.getString("fallbackColor") ?: "#fff"
+  }
+
   @ReactMethod
   override fun getPalette(uri: String, config: ReadableMap, promise: Promise) {
 
-    val headers = getHeadersFromConfig(config)
+    val headers = this.getHeadersFromConfig(config)
 
-    val fallback = config.getString("fallbackColor") ?: "#fff"
+    val fallback = this.getFallbackColorFromConfig(config)
 
     imgPalette.getPalette(uri, context, fallback, headers, promise)
   }
@@ -61,40 +95,44 @@ class ImagePaletteModule internal constructor(context: ReactApplicationContext) 
 
 
   @ReactMethod
-  override fun getAverageColorSectors(uri: String, sectors: ReadableArray, config: ReadableMap, promise: Promise) {
-    val headers = getHeadersFromConfig(config)
+  override fun getSegmentsAverageColor(
+    uri: String,
+    segments: ReadableArray,
+    config: ReadableMap,
+    promise: Promise
+  ) {
+    val headers = this.getHeadersFromConfig(config)
 
-    val sectorsParsed: ArrayList<ImagePalette.ImageSectorConfig> = ArrayList()
+    val segmentsParsed = this.parseSegments(segments)
 
-    for (i in 0 until sectors.size()) {
-      val readableMap = sectors.getMap(i)
-
-      val pixelSpacing = try {
-        readableMap.getInt("pixelSpacingAndroid")
-      } catch (exception: Exception) {
-        5
-      }
-
-      sectorsParsed.add(
-        ImagePalette.ImageSectorConfig(
-        fromY = readableMap.getInt("fromY"),
-          toY = readableMap.getInt("toY"),
-          fromX = readableMap.getInt("fromX"),
-          toX = readableMap.getInt("toX"),
-          pixelSpacingAndroid = pixelSpacing,
-      ))
-    }
-
-    imgPalette.getAverageColorSectors(
+    imgPalette.getSegmentsAverageColor(
       uri,
       context,
       headers,
-      sectorsParsed,
+      segmentsParsed,
       promise
     )
   }
 
-  companion object {
-    const val NAME = "ImagePalette"
+  @ReactMethod
+  override fun getSegmentsPalette(
+    uri: String,
+    segments: ReadableArray,
+    config: ReadableMap,
+    promise: Promise
+  ) {
+    val headers = this.getHeadersFromConfig(config)
+
+    val segmentsParsed = this.parseSegments(segments)
+    val fallback = this.getFallbackColorFromConfig(config)
+
+    imgPalette.getSegmentsPalette(
+      uri,
+      context,
+      fallback,
+      headers,
+      segmentsParsed,
+      promise
+    )
   }
 }

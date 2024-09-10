@@ -26,7 +26,7 @@ export interface PaletteResult {
   dominantAndroid?: string;
 }
 
-export interface ImageSectorConfig {
+export interface ImageSegmentConfig {
   fromX: Int32;
   toX: Int32;
   fromY: Int32;
@@ -40,9 +40,9 @@ export interface ImageAverageColorSectorsNativeConfig {
 
 export interface Spec extends TurboModule {
   getAverageColor(uri: string, config: PaletteNativeConfig): Promise<string>;
-  getAverageColorSectors(
+  getSegmentsAverageColor(
     uri: string,
-    sectors: ImageSectorConfig[],
+    segments: ImageSegmentConfig[],
     config?: ImageAverageColorSectorsNativeConfig
   ): Promise<string[]>;
   getPalette(

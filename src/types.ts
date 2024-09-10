@@ -4,7 +4,7 @@ import type {
   ImageAverageColorSectorsNativeConfig,
 } from './NativeImagePalette';
 
-export type { PaletteResult, ImageSectorConfig } from './NativeImagePalette';
+export type { PaletteResult, ImageSegmentConfig } from './NativeImagePalette';
 
 export type ImagePaletteCommonConfig = {
   /**

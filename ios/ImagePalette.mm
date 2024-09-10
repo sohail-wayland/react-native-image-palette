@@ -45,8 +45,8 @@ RCT_EXPORT_METHOD(getPalette:(NSString*)uri
     [imagePalette getPaletteWithUri:uri fallback:fallback headers:headers onResolve:resolve onReject:reject];
 }
 
-RCT_EXPORT_METHOD(getAverageColorSectors:(NSString*)uri
-                  sectors:(NSArray*)sectors
+RCT_EXPORT_METHOD(getSegmentsAverageColor:(NSString*)uri
+                  segments:(NSArray*)segments
                   configs:(NSDictionary*)configs
                   resolve:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject)
@@ -55,7 +55,26 @@ RCT_EXPORT_METHOD(getAverageColorSectors:(NSString*)uri
     
     NSDictionary* headers = [configs objectForKey:@"headers"];
     
-    [imagePalette getAverageColorSectorsWithUri:uri sectors:sectors headers:headers onResolve:resolve onReject:reject];
+    [imagePalette getSegmentsAverageColorWithUri:uri segments:segments headers:headers onResolve:resolve onReject:reject];
+}
+
+RCT_EXPORT_METHOD(getSegmentsPalette:(NSString*)uri
+                  segments:(NSArray*)segments
+                  configs:(NSDictionary*)configs
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject)
+{
+    ImagePaletteModule *imagePalette = (ImagePaletteModule *)self.manager;
+    
+    NSDictionary* headers = [configs objectForKey:@"headers"];
+    
+    NSString* fallback = [configs objectForKey:@"fallbackColor"];
+    
+    if (fallback == nil) {
+        fallback = @"#fff";
+    }
+    
+    [imagePalette getSegmentsPaletteWithUri:uri segments:segments fallback:fallback headers:headers onResolve:resolve onReject:reject];
 }
 
 

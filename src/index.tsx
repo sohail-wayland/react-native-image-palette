@@ -3,7 +3,7 @@ import { resolveImageSource } from './utils';
 import type {
   ImagePaletteCommonConfig,
   AverageColorConfig,
-  ImageSectorConfig,
+  ImageSegmentConfig,
   PaletteConfig,
 } from './types';
 
@@ -51,12 +51,22 @@ export const getPalette = async (
   return ImagePalette.getPalette(resolvedSrc, config);
 };
 
-export const getAverageColorSectors = async (
+export const getSegmentsAverageColor = async (
   uri: string | ImageRequireSource,
-  sectors: ImageSectorConfig[],
+  segments: ImageSegmentConfig[],
   config: ImagePaletteCommonConfig = {}
 ) => {
   const resolvedSrc = resolveImageSource(uri);
 
-  return ImagePalette.getAverageColorSectors(resolvedSrc, sectors, config);
+  return ImagePalette.getSegmentsAverageColor(resolvedSrc, segments, config);
+};
+
+export const getSegmentsPalette = async (
+  uri: string | ImageRequireSource,
+  segments: ImageSegmentConfig[],
+  config: ImagePaletteCommonConfig = {}
+) => {
+  const resolvedSrc = resolveImageSource(uri);
+
+  return ImagePalette.getSegmentsPalette(resolvedSrc, segments, config);
 };

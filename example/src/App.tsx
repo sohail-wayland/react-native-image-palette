@@ -9,9 +9,10 @@ import {
   ScrollView,
 } from 'react-native';
 import {
-  getAverageColorSectors,
   getAverageColor,
   getPalette,
+  getSegmentsAverageColor,
+  getSegmentsPalette,
   type PaletteResult,
 } from 'react-native-image-palette';
 
@@ -29,7 +30,25 @@ export default function App() {
   const [palette, setPalette] = useState<Partial<PaletteResult>>({});
 
   useEffect(() => {
-    getAverageColorSectors(image, [
+    getSegmentsAverageColor(image, [
+      { fromX: 0, toX: 33, fromY: 0, toY: 33 },
+      { fromX: 34, toX: 66, fromY: 0, toY: 33 },
+      { fromX: 67, toX: 100, fromY: 0, toY: 33 },
+
+      { fromX: 0, toX: 33, fromY: 34, toY: 66 },
+      { fromX: 34, toX: 66, fromY: 34, toY: 66 },
+      { fromX: 67, toX: 100, fromY: 34, toY: 66 },
+
+      { fromX: 0, toX: 33, fromY: 67, toY: 100 },
+      { fromX: 34, toX: 66, fromY: 67, toY: 100 },
+      { fromX: 67, toX: 100, fromY: 67, toY: 100 },
+    ])
+      .then((res) => {
+        setAverageSectors(res);
+      })
+      .catch(console.error);
+
+    getSegmentsPalette(image, [
       { fromX: 0, toX: 33, fromY: 0, toY: 33 },
       { fromX: 34, toX: 66, fromY: 0, toY: 33 },
       { fromX: 67, toX: 100, fromY: 0, toY: 33 },
@@ -44,7 +63,6 @@ export default function App() {
     ])
       .then((res) => {
         console.log({ res });
-        setAverageSectors(res);
       })
       .catch(console.error);
 
@@ -82,7 +100,7 @@ export default function App() {
       </View>
       <Image
         source={typeof image === 'string' ? { uri: image } : image}
-        style={styles.img}
+        style={[styles.img, { objectFit: 'cover' }]}
       />
 
       {Boolean(averageColor) && (
@@ -114,7 +132,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   img: {
-    height: Dimensions.get('window').width,
+    width: Dimensions.get('window').width,
     flex: 1,
   },
   row: {
