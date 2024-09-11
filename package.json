@@ -1,7 +1,7 @@
 {
   "name": "react-native-image-palette",
-  "version": "0.1.0",
-  "description": "Get color palette from an image",
+  "version": "1.0.0",
+  "description": "Get average color or a colors palette from an image or the image segments",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
   "types": "lib/typescript/src/index.d.ts",
