@@ -17,26 +17,26 @@ RCT_EXPORT_MODULE()
 
 
 RCT_EXPORT_METHOD(getAverageColor:(NSString*)uri
-                  configs:(NSDictionary*)configs
+                  config:(NSDictionary *)config
                   resolve:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject)
 {
     ImagePaletteModule *imagePalette = (ImagePaletteModule *)self.manager;
     
-    NSDictionary* headers = [configs objectForKey:@"headers"];
+    NSDictionary* headers = [config objectForKey:@"headers"];
 
     [imagePalette getAverageColorWithUri:uri headers:headers onResolve:resolve onReject:reject];
 }
 
 RCT_EXPORT_METHOD(getPalette:(NSString*)uri
-                  configs:(NSDictionary*)configs
+                  config:(NSDictionary *)config
                   resolve:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject)
 {
     ImagePaletteModule *imagePalette = (ImagePaletteModule *)self.manager;
     
-    NSDictionary* headers = [configs objectForKey:@"headers"];
-    NSString* fallback = [configs objectForKey:@"fallbackColor"];
+    NSDictionary* headers = [config objectForKey:@"headers"];
+    NSString* fallback = [config objectForKey:@"fallbackColor"];
     
     if (fallback == nil) {
         fallback = @"#fff";
@@ -47,28 +47,28 @@ RCT_EXPORT_METHOD(getPalette:(NSString*)uri
 
 RCT_EXPORT_METHOD(getSegmentsAverageColor:(NSString*)uri
                   segments:(NSArray*)segments
-                  configs:(NSDictionary*)configs
+                  config:(NSDictionary *)config
                   resolve:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject)
 {
     ImagePaletteModule *imagePalette = (ImagePaletteModule *)self.manager;
+
     
-    NSDictionary* headers = [configs objectForKey:@"headers"];
+    NSDictionary* headers = [config objectForKey:@"headers"];
     
     [imagePalette getSegmentsAverageColorWithUri:uri segments:segments headers:headers onResolve:resolve onReject:reject];
 }
-
 RCT_EXPORT_METHOD(getSegmentsPalette:(NSString*)uri
                   segments:(NSArray*)segments
-                  configs:(NSDictionary*)configs
+                  config:(NSDictionary *)config
                   resolve:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject)
 {
     ImagePaletteModule *imagePalette = (ImagePaletteModule *)self.manager;
     
-    NSDictionary* headers = [configs objectForKey:@"headers"];
+    NSDictionary* headers = [config objectForKey:@"headers"];
     
-    NSString* fallback = [configs objectForKey:@"fallbackColor"];
+    NSString* fallback = [config objectForKey:@"fallbackColor"];
     
     if (fallback == nil) {
         fallback = @"#fff";

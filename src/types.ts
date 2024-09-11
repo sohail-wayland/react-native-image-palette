@@ -1,8 +1,4 @@
-import type {
-  PaletteNativeConfig,
-  AverageColorNativeConfig,
-  ImageAverageColorSectorsNativeConfig,
-} from './NativeImagePalette';
+import type { Int32 } from 'react-native/Libraries/Types/CodegenTypes';
 
 export type { PaletteResult, ImageSegmentConfig } from './NativeImagePalette';
 
@@ -13,14 +9,10 @@ export type ImagePaletteCommonConfig = {
   headers?: Record<string, string>;
 };
 
-export type PaletteConfig = Omit<PaletteNativeConfig, 'headers'> &
-  ImagePaletteCommonConfig;
+export type PaletteConfig = ImagePaletteCommonConfig & {
+  fallbackColor?: string;
+};
 
-export type AverageColorConfig = Omit<AverageColorNativeConfig, 'headers'> &
-  ImagePaletteCommonConfig;
-
-export type AverageBorderColorConfig = Omit<
-  ImageAverageColorSectorsNativeConfig,
-  'headers'
-> &
-  ImagePaletteCommonConfig;
+export type AverageColorConfig = ImagePaletteCommonConfig & {
+  pixelSpacingAndroid?: Int32;
+};

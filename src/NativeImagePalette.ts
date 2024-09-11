@@ -6,11 +6,6 @@ import type {
   Int32,
 } from 'react-native/Libraries/Types/CodegenTypes';
 
-export interface AverageColorNativeConfig {
-  pixelSpacingAndroid?: Int32;
-  headers?: UnsafeObject;
-}
-
 export interface PaletteNativeConfig {
   fallbackColor?: string;
   headers?: UnsafeObject;
@@ -34,21 +29,19 @@ export interface ImageSegmentConfig {
   pixelSpacingAndroid?: Int32;
 }
 
-export interface ImageAverageColorSectorsNativeConfig {
-  headers?: UnsafeObject;
-}
-
 export interface Spec extends TurboModule {
-  getAverageColor(uri: string, config: PaletteNativeConfig): Promise<string>;
+  getAverageColor(uri: string, config: UnsafeObject): Promise<string>;
   getSegmentsAverageColor(
     uri: string,
     segments: ImageSegmentConfig[],
-    config?: ImageAverageColorSectorsNativeConfig
+    config: UnsafeObject
   ): Promise<string[]>;
-  getPalette(
+  getPalette(uri: string, config: UnsafeObject): Promise<PaletteResult>;
+  getSegmentsPalette(
     uri: string,
-    config: AverageColorNativeConfig
-  ): Promise<PaletteResult>;
+    segments: ImageSegmentConfig[],
+    config: UnsafeObject
+  ): Promise<PaletteResult[]>;
 }
 
 export default TurboModuleRegistry.getEnforcing<Spec>('ImagePalette');

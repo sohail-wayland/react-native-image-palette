@@ -45,7 +45,7 @@ export const getAverageColor = async (
 export const getPalette = async (
   uri: string | ImageRequireSource,
   config: PaletteConfig = {}
-): Promise<any> => {
+) => {
   const resolvedSrc = resolveImageSource(uri);
 
   return ImagePalette.getPalette(resolvedSrc, config);
