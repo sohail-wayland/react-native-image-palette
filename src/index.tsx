@@ -1,10 +1,10 @@
 import { type ImageRequireSource, NativeModules, Platform } from 'react-native';
 import { resolveImageSource } from './utils';
 import type {
-  ImagePaletteCommonConfig,
   AverageColorConfig,
   ImageSegmentConfig,
   PaletteConfig,
+  PaletteResult,
 } from './types';
 
 export * from './types';
@@ -45,7 +45,7 @@ export const getAverageColor = async (
 export const getPalette = async (
   uri: string | ImageRequireSource,
   config: PaletteConfig = {}
-) => {
+): Promise<PaletteResult> => {
   const resolvedSrc = resolveImageSource(uri);
 
   return ImagePalette.getPalette(resolvedSrc, config);
@@ -54,8 +54,8 @@ export const getPalette = async (
 export const getSegmentsAverageColor = async (
   uri: string | ImageRequireSource,
   segments: ImageSegmentConfig[],
-  config: ImagePaletteCommonConfig = {}
-) => {
+  config: AverageColorConfig = {}
+): Promise<string[]> => {
   const resolvedSrc = resolveImageSource(uri);
 
   return ImagePalette.getSegmentsAverageColor(resolvedSrc, segments, config);
@@ -64,8 +64,8 @@ export const getSegmentsAverageColor = async (
 export const getSegmentsPalette = async (
   uri: string | ImageRequireSource,
   segments: ImageSegmentConfig[],
-  config: ImagePaletteCommonConfig = {}
-) => {
+  config: PaletteConfig = {}
+): Promise<PaletteResult[]> => {
   const resolvedSrc = resolveImageSource(uri);
 
   return ImagePalette.getSegmentsPalette(resolvedSrc, segments, config);

@@ -6,11 +6,6 @@ import type {
   Int32,
 } from 'react-native/Libraries/Types/CodegenTypes';
 
-export interface PaletteNativeConfig {
-  fallbackColor?: string;
-  headers?: UnsafeObject;
-}
-
 export interface PaletteResult {
   vibrant: string;
   darkVibrant: string;
@@ -26,7 +21,6 @@ export interface ImageSegmentConfig {
   toX: Int32;
   fromY: Int32;
   toY: Int32;
-  pixelSpacingAndroid?: Int32;
 }
 
 export interface Spec extends TurboModule {

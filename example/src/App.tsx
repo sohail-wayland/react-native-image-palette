@@ -30,19 +30,23 @@ export default function App() {
   const [palette, setPalette] = useState<Partial<PaletteResult>>({});
 
   useEffect(() => {
-    getSegmentsAverageColor(image, [
-      { fromX: 0, toX: 33, fromY: 0, toY: 33 },
-      { fromX: 34, toX: 66, fromY: 0, toY: 33 },
-      { fromX: 67, toX: 100, fromY: 0, toY: 33 },
+    getSegmentsAverageColor(
+      image,
+      [
+        { fromX: 0, toX: 33, fromY: 0, toY: 33 },
+        { fromX: 34, toX: 66, fromY: 0, toY: 33 },
+        { fromX: 67, toX: 100, fromY: 0, toY: 33 },
 
-      { fromX: 0, toX: 33, fromY: 34, toY: 66 },
-      { fromX: 34, toX: 66, fromY: 34, toY: 66 },
-      { fromX: 67, toX: 100, fromY: 34, toY: 66 },
+        { fromX: 0, toX: 33, fromY: 34, toY: 66 },
+        { fromX: 34, toX: 66, fromY: 34, toY: 66 },
+        { fromX: 67, toX: 100, fromY: 34, toY: 66 },
 
-      { fromX: 0, toX: 33, fromY: 67, toY: 100 },
-      { fromX: 34, toX: 66, fromY: 67, toY: 100 },
-      { fromX: 67, toX: 100, fromY: 67, toY: 100 },
-    ])
+        { fromX: 0, toX: 33, fromY: 67, toY: 100 },
+        { fromX: 34, toX: 66, fromY: 67, toY: 100 },
+        { fromX: 67, toX: 100, fromY: 67, toY: 100 },
+      ],
+      { pixelSpacingAndroid: 2 }
+    )
       .then(setAverageSectors)
       .catch(console.error);
 
@@ -72,7 +76,6 @@ export default function App() {
       .catch(console.error);
 
     getAverageColor(image, {
-      pixelSpacingAndroid: 1,
       headers: { Auth: 'Bearer 123' },
     })
       .then(setAverageColor)

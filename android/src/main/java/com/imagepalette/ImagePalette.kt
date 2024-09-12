@@ -25,7 +25,6 @@ class ImagePalette {
     val toX: Int,
     val fromY: Int,
     val toY: Int,
-    val pixelSpacingAndroid: Int
   )
 
   private val service = CoroutineScope(Dispatchers.IO)
@@ -208,6 +207,7 @@ class ImagePalette {
   fun getSegmentsAverageColor(
     uri: String,
     context: Context,
+    pixelSpacing: Int,
     headers: Map<String, String>? = null,
     segments: ArrayList<ImageSegmentConfig>,
     promise: Promise
@@ -221,7 +221,7 @@ class ImagePalette {
         for (segment in segments) {
           val result = calculateSegmentAverageColor(
             image,
-            pixelSpacing = segment.pixelSpacingAndroid,
+            pixelSpacing = pixelSpacing,
             fromX = image.width * segment.fromX / 100,
             toX = image.width * segment.toX / 100,
             fromY = image.height * segment.fromY / 100,

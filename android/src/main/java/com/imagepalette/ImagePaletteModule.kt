@@ -39,17 +39,19 @@ class ImagePaletteModule internal constructor(context: ReactApplicationContext) 
     return headers
   }
 
+  private fun getPixelSpacingFromConfig(config: ReadableMap): Int {
+    return try {
+      config.getInt("pixelSpacingAndroid")
+    } catch (exception: Exception) {
+      5
+    }
+  }
+
   private fun parseSegments(segments: ReadableArray): ArrayList<ImagePalette.ImageSegmentConfig> {
     val segmentsParsed: ArrayList<ImagePalette.ImageSegmentConfig> = ArrayList()
 
     for (i in 0 until segments.size()) {
       val segmentMap = segments.getMap(i)
-
-      val pixelSpacing = try {
-        segmentMap.getInt("pixelSpacingAndroid")
-      } catch (exception: Exception) {
-        5
-      }
 
       segmentsParsed.add(
         ImagePalette.ImageSegmentConfig(
@@ -57,13 +59,13 @@ class ImagePaletteModule internal constructor(context: ReactApplicationContext) 
           toY = segmentMap.getInt("toY"),
           fromX = segmentMap.getInt("fromX"),
           toX = segmentMap.getInt("toX"),
-          pixelSpacingAndroid = pixelSpacing,
         )
       )
     }
 
     return segmentsParsed
   }
+
 
   private fun getFallbackColorFromConfig(config: ReadableMap): String {
     return config.getString("fallbackColor") ?: "#fff"
@@ -84,11 +86,7 @@ class ImagePaletteModule internal constructor(context: ReactApplicationContext) 
 
     val headers = getHeadersFromConfig(config)
 
-    val pixelSpacing = try {
-      config.getInt("pixelSpacingAndroid")
-    } catch (exception: Exception) {
-      5
-    }
+    val pixelSpacing = this.getPixelSpacingFromConfig(config)
 
     imgPalette.getAverageColor(uri, context, headers, pixelSpacing, promise)
   }
@@ -105,9 +103,12 @@ class ImagePaletteModule internal constructor(context: ReactApplicationContext) 
 
     val segmentsParsed = this.parseSegments(segments)
 
+    val pixelSpacing = this.getPixelSpacingFromConfig(config)
+
     imgPalette.getSegmentsAverageColor(
       uri,
       context,
+      pixelSpacing,
       headers,
       segmentsParsed,
       promise

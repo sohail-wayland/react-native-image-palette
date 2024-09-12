@@ -63,10 +63,89 @@ getPalette(image)
 getAverageColor(image)
   .then((averageColor) => console.log(averageColor))
 
+```
+
+## API
+
+### `getPalette(image, config): Primise<PaletteResult>`
+
+Retrieve the pallet of the given image.\
+⚠️ Results can be slightly different on each platform.
+
+| Property | Type                         | Description                                                                  |
+|----------|------------------------------|------------------------------------------------------------------------------|
+| `image`  | string \| ImageRequireSource | - can be string (image uri or base64) or local file `require('./image.jpg')` |
+| `config` | PaletteConfig?               | Optional config object                                                       |
+
+`PaletteConfig` - optional config type description
+
+| Property        | Type                    | Description                                                                                             |
+|-----------------|-------------------------|---------------------------------------------------------------------------------------------------------|
+| `headers`       | Record<string, string>? | HTTP headers to be sent along with the GET request to download the image (Auth token or e.g.)           |
+| `fallbackColor` | string?                 | If a color property couldn't be retrieved, it will default to this hex color string. By default is #fff |
+
+
+#### Return type `PaletteResult`
+
+| Property          | Type    |
+|-------------------|---------|
+| `vibrant`         | string  |
+| `darkVibrant`     | string  |
+| `lightVibrant`    | string  |
+| `muted`           | string  |
+| `darkMuted`       | string  |
+| `lightMuted`      | string  |
+| `dominantAndroid` | string? |
+
+Note `dominantAndroid` is only available on Android.
+
+### `getAverageColor(image, config): Primise<string>`
+
+Returns average (mean) color from the given image.
+
+| Property | Type                           | Description                                                                  |
+|----------|--------------------------------|------------------------------------------------------------------------------|
+| `image`  | string \| ImageRequireSource   | - can be string (image uri or base64) or local file `require('./image.jpg')` |
+| `config` | AverageColorConfig?            | Optional config object                                                       |
+
+`AverageColorConfig` - optional config type description
+
+| Property              | Type                    | Description                                                                                                                                               |
+|-----------------------|-------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `headers`             | Record<string, string>? | HTTP headers to be sent along with the GET request to download the image (Auth token or e.g.)                                                             |
+| `pixelSpacingAndroid` | `number?`               | How many pixels to skip when iterating over image pixels. Higher means better performance (**note**: value cannot be lower than 1). Default value is `5`. |
+
+#### Return type `string`
+
+## Get average color or palette by image segments
+
+This module provides functionality to get average color or palette from multiple segments of the given image.\
+For example, you can calculate average color only for top and bottom borders of the image, or get palette only from
+center of the image.
+
+
+Functions  `getSegmentsAverageColor(image, segments, config): Promise<string[]>` and `getSegmentsPalette(image, segments, config): Promise<PaletteResult[]>
+enhancing functionality of the functions described above, by adding `segments` argument.\
+This argument is required array of coordinates in percents from which to which points you need to crop an image.\
+In the result you will receive an array with the same length as the length of `segments` array being passed.
+
+`ImageSegmentConfig` has following structure:
+
+| Property | Type             | Description                                                                                                                                                             |
+|----------|------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `fromX`  | number (0..100)  | Offset in % from the left side of the image. Under the hood we get image size and multiply this value on the amount of pixels in width of the image.                    |
+| `toX`    | number (0..100)  | Must be > `fromX`. Offset in % from the left side of the image. Under the hood we get image size and multiply this value on the amount of pixels in width of the image. |
+| `fromY`  | number (0..100)  | Offset in % from the top of the image. Under the hood we get image size and multiply this value on the amount of pixels in height of the image.                         |
+| `toX`    | number (0..100)  | Must be > `fromY`. Offset in % from the top of the image. Under the hood we get image size and multiply this value on the amount of pixels in height of the image.      |
+
+
+### Usage
+
+```ts
 getSegmentsAverageColor(image, [
-  { fromX: 0, toX: 100, fromY: 0, toY: 10 },
-  { fromX: 40, toX: 60, fromY: 40, toY: 60 },
-  { fromX: 0, toX: 100, fromY: 90, toY: 100 },
+  { fromX: 0, toX: 100, fromY: 0, toY: 10 }, // from 0% to 100% by width and from 0% to 10% of height
+  { fromX: 40, toX: 60, fromY: 40, toY: 60 }, // from 40% to 60% by width and from 40% to 60% of height
+  { fromX: 0, toX: 100, fromY: 90, toY: 100 }, // from 0% to 100% by width and from 90% to 100% of height
 ])
   .then(([top, center, bottom]) => {
     console.log("Top border average color is: ", top)
@@ -76,9 +155,9 @@ getSegmentsAverageColor(image, [
 
 
 getSegmentsPalette(image, [
-  { fromX: 0, toX: 100, fromY: 0, toY: 10 },
-  { fromX: 40, toX: 60, fromY: 40, toY: 60 },
-  { fromX: 0, toX: 100, fromY: 90, toY: 100 },
+  { fromX: 0, toX: 100, fromY: 0, toY: 10 }, // from 0% to 100% by width and from 0% to 10% of height
+  { fromX: 40, toX: 60, fromY: 40, toY: 60 }, // from 40% to 60% by width and from 40% to 60% of height
+  { fromX: 0, toX: 100, fromY: 90, toY: 100 }, // from 0% to 100% by width and from 90% to 100% of height
 ])
   .then(([top, center, bottom]) => {
     console.log("Top vibrant color is: ", top.vibrant)
@@ -86,5 +165,4 @@ getSegmentsPalette(image, [
     console.log("Bottom lightVibrant color is: ", bottom.lightVibrant)
   })
   .catch(console.error);
-
 ```
