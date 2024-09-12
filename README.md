@@ -1,6 +1,7 @@
 # react-native-image-palette
 
 ![Platform](https://img.shields.io/badge/platform-android%20%7C%20ios-%239cf)
+[![NPM Badge](https://img.shields.io/npm/v/@somesoap/react-native-image-palette)](https://www.npmjs.com/package/@somesoap/react-native-image-palette)
 
 
 Get average color and palette from image or from multiple different segments of the image.
@@ -11,7 +12,8 @@ In current implementation you can define a **specific segment** of the image to 
 
 For palette calculation this module uses the [Palette](https://developer.android.com/reference/androidx/palette/graphics/Palette) class on Android and [swift-vibrant](https://github.com/bd452/swift-vibrant) on iOS.
 
-Since the implementation of each platform is different you can get **different color results for each**.
+Since the implementation of getting palette is different for each platform you can get **different color results for each**.\
+Results of calculating average color will be more accurate and only have insufficient difference.
 
 ## Installation
 

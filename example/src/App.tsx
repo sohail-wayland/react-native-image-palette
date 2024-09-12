@@ -22,7 +22,7 @@ import {
 // const bird =
 //   'https://cdn.pixabay.com/photo/2024/05/26/10/15/bird-8788491_1280.jpg';
 
-const image = require('./farm.jpeg');
+const image = require('./parrot.jpeg');
 
 export default function App() {
   const [avgSectors, setAverageSectors] = useState<string[]>([]);
@@ -43,9 +43,7 @@ export default function App() {
       { fromX: 34, toX: 66, fromY: 67, toY: 100 },
       { fromX: 67, toX: 100, fromY: 67, toY: 100 },
     ])
-      .then((res) => {
-        setAverageSectors(res);
-      })
+      .then(setAverageSectors)
       .catch(console.error);
 
     getSegmentsPalette(image, [
@@ -74,7 +72,7 @@ export default function App() {
       .catch(console.error);
 
     getAverageColor(image, {
-      // pixelSpacingAndroid: 1,
+      pixelSpacingAndroid: 1,
       headers: { Auth: 'Bearer 123' },
     })
       .then(setAverageColor)
@@ -82,26 +80,34 @@ export default function App() {
   }, []);
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.row}>
-        {avgSectors[0] && <ColorView color={avgSectors[0]} name="1:1" />}
-        {avgSectors[1] && <ColorView color={avgSectors[1]} name="1:2" />}
-        {avgSectors[2] && <ColorView color={avgSectors[2]} name="1:3" />}
+    <ScrollView bounces={false} style={styles.container}>
+      <View style={{ backgroundColor: avgSectors[4], padding: 10 }}>
+        <View style={styles.textWrapper}>
+          <Text style={styles.title}>Image</Text>
+        </View>
+        <Image
+          source={typeof image === 'string' ? { uri: image } : image}
+          style={styles.img}
+        />
+        <View style={styles.textWrapper}>
+          <Text style={styles.title}>Average colors</Text>
+        </View>
       </View>
       <View style={styles.row}>
-        {avgSectors[3] && <ColorView color={avgSectors[3]} name="2:1" />}
-        {avgSectors[4] && <ColorView color={avgSectors[4]} name="2:2" />}
-        {avgSectors[5] && <ColorView color={avgSectors[5]} name="2:3" />}
+        {avgSectors[0] && <ColorView color={avgSectors[0]} />}
+        {avgSectors[1] && <ColorView color={avgSectors[1]} />}
+        {avgSectors[2] && <ColorView color={avgSectors[2]} />}
       </View>
       <View style={styles.row}>
-        {avgSectors[6] && <ColorView color={avgSectors[6]} name="3:1" />}
-        {avgSectors[7] && <ColorView color={avgSectors[7]} name="3:2" />}
-        {avgSectors[8] && <ColorView color={avgSectors[8]} name="3:3" />}
+        {avgSectors[3] && <ColorView color={avgSectors[3]} />}
+        {avgSectors[4] && <ColorView color={avgSectors[4]} />}
+        {avgSectors[5] && <ColorView color={avgSectors[5]} />}
       </View>
-      <Image
-        source={typeof image === 'string' ? { uri: image } : image}
-        style={[styles.img, { objectFit: 'cover' }]}
-      />
+      <View style={styles.row}>
+        {avgSectors[6] && <ColorView color={avgSectors[6]} />}
+        {avgSectors[7] && <ColorView color={avgSectors[7]} />}
+        {avgSectors[8] && <ColorView color={avgSectors[8]} />}
+      </View>
 
       {Boolean(averageColor) && (
         <ColorView name="Average Color" color={averageColor} />
@@ -113,14 +119,14 @@ export default function App() {
   );
 }
 
-const ColorView: React.FC<{ color: string; name: string }> = ({
+const ColorView: React.FC<{ color: string; name?: string }> = ({
   name,
   color,
 }) => {
   return (
     <View style={[styles.colorView, { backgroundColor: color }]}>
       <View style={styles.textWrapper}>
-        <Text style={styles.text}>{name}</Text>
+        {name && <Text style={styles.text}>{name}</Text>}
         <Text style={styles.text}>{color}</Text>
       </View>
     </View>
@@ -132,8 +138,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   img: {
-    width: Dimensions.get('window').width,
-    flex: 1,
+    height: 300,
+    objectFit: 'contain',
+
+    width: '100%',
+    marginVertical: 10,
   },
   row: {
     flexDirection: 'row',
@@ -154,6 +163,10 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 24,
     fontWeight: Platform.OS === 'ios' ? 500 : 'semibold',
+    color: '#202020',
+  },
+  title: {
+    fontSize: 36,
     color: '#202020',
   },
 });
