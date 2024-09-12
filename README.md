@@ -15,6 +15,15 @@ For palette calculation this module uses the [Palette](https://developer.android
 Since the implementation of getting palette is different for each platform you can get **different color results for each**.\
 Results of calculating average color will be more accurate and only have insufficient difference.
 
+
+<p align="center" >
+  <img
+    width="720px"
+    src="https://github.com/someSOAP/react-native-image-palette/blob/main/assets/preview.png?raw=true"
+    alt="Example 1"
+  />
+</p>
+
 ## Installation
 
 ```sh
