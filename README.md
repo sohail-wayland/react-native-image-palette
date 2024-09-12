@@ -16,17 +16,22 @@ Since the implementation of each platform is different you can get **different c
 ## Installation
 
 ```sh
-npm install react-native-image-palette
+npm install @somesoap/react-native-image-palette
 ```
 or
 ```sh
-yarn add react-native-image-palette
+yarn add @somesoap/react-native-image-palette
 ```
 
 ## Usage
 Import functions you need:
 ```ts
-import { getAverageColor, getPalette, getSegmentsAverageColor } from 'react-native-image-palette';
+import {
+  getPalette,
+  getAverageColor,
+  getSegmentsAverageColor,
+  getSegmentsPalette,
+} from '@somesoap/react-native-image-palette';
 ```
 
 Define image source

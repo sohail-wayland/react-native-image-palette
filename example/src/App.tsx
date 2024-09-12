@@ -14,7 +14,7 @@ import {
   getSegmentsAverageColor,
   getSegmentsPalette,
   type PaletteResult,
-} from 'react-native-image-palette';
+} from '@somesoap/react-native-image-palette';
 
 // const farm = require('./farm.jpeg');
 // const yunaUrl = 'https://i.imgur.com/68jyjZT.jpg';

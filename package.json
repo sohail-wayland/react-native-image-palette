@@ -1,6 +1,6 @@
 {
-  "name": "react-native-image-palette",
-  "version": "1.0.0",
+  "name": "@somesoap/react-native-image-palette",
+  "version": "1.0.1",
   "description": "Get average color or a colors palette from an image or the image segments",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",

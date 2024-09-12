@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import swift_vibrant
 
 @objc public class ImagePaletteModule: NSObject {
     

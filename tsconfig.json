@@ -2,7 +2,7 @@
   "compilerOptions": {
     "rootDir": ".",
     "paths": {
-      "react-native-image-palette": ["./src/index"]
+      "@somesoap/react-native-image-palette": ["./src/index"]
     },
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,
