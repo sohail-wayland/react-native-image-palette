@@ -124,7 +124,7 @@ For example, you can calculate average color only for top and bottom borders of 
 center of the image.
 
 
-Functions  `getSegmentsAverageColor(image, segments, config): Promise<string[]>` and `getSegmentsPalette(image, segments, config): Promise<PaletteResult[]>
+Functions  `getSegmentsAverageColor(image, segments, config): Promise<string[]>` and `getSegmentsPalette(image, segments, config): Promise<PaletteResult[]>`
 enhancing functionality of the functions described above, by adding `segments` argument.\
 This argument is required array of coordinates in percents from which to which points you need to crop an image.\
 In the result you will receive an array with the same length as the length of `segments` array being passed.
