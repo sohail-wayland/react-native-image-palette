@@ -1,6 +1,6 @@
 {
   "name": "@somesoap/react-native-image-palette",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Get average color or a colors palette from an image or the image segments",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -41,7 +41,16 @@
   "keywords": [
     "react-native",
     "ios",
-    "android"
+    "android",
+    "image",
+    "prominent",
+    "dominant",
+    "vibrant",
+    "color",
+    "avergae",
+    "mean",
+    "palette",
+    "react-native-image-palette"
   ],
   "repository": {
     "type": "git",
